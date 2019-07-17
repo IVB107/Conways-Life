@@ -1,14 +1,15 @@
 import React, { Component } from 'react'
+import Styled from 'styled-components'
 
 import '../index.css'
 import Box from './Box'
 
-class Grid extends Component {
+class FlexGrid extends Component {
 
   render () {
 
     // const width = `${(this.props.cols * 17)-20}px`
-    const width = `${(this.props.cols * 16)}px`
+    const width = `${(this.props.cols * 15)}px`
     let rowsArr = []
 
     // Refactor to use map() ?
@@ -32,11 +33,22 @@ class Grid extends Component {
     }
 
     return (
-      <div className="grid" style={{width: width}}>
+      // <div className="grid" style={{width: width}}>
+      //   {rowsArr}
+      // </div>
+      <Grid style={{width: width}}>
         {rowsArr}
-      </div>
+      </Grid>
     )
   }
 }
 
-export default Grid
+const Grid = Styled.div`
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  margin: 20px 0;
+`
+
+export default FlexGrid
