@@ -9,7 +9,7 @@ const Box = (props) => {
     <div 
       className={props.boxClass}
       id={props.id}
-      onClick={this.selectBox}
+      onClick={() => props.selectBox(props.row, props.col)}
       // onMouseOver={() => props.selectBox(props.row, props.col)}
     />
   )

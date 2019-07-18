@@ -20,6 +20,8 @@ class Main extends Component {
     }
   }
 
+  gridCopy = (arr) => JSON.parse(JSON.stringify(arr))
+
   selectBox = (row, col) => {
     let gridCopy = [...this.state.gridFull]
     gridCopy[row][col] = !gridCopy[row][col]
@@ -43,6 +45,12 @@ class Main extends Component {
   playButton = () => {
     clearInterval(this.intervalId)
     this.intervalId = setInterval(this.playGame, this.speed)
+    // while (true) {
+    //   let time = Date.now()
+    //   if (Math.floor(time) % this.speed === 0) {
+    //     this.playGame()
+    //   }
+    // }
   }
 
   pauseButton = () => {
@@ -69,49 +77,33 @@ class Main extends Component {
   }
 
   playGame = () => {
-    // let currentGrid = this.state.gridFull
+    let currentGrid = [...this.state.gridFull]
     // let nextGen = [...this.state.gridFull]
-
-    // // 1. Count the number of 'live' neighbors (max 8) for each box
-    // for (let i = 0; i < this.rows; i++) {
-    //   for (let j = 0; j < this.cols; j++) {
-    //     let neighbors = 0
-    //     if (i > 0 && currentGrid[i - 1][j]) neighbors++;
-    //     if ((i > 0 && j > 0) && currentGrid[i - 1][j - 1]) neighbors++
-    //     if ((i > 0 && j < this.cols - 1) && currentGrid[i - 1][j + 1]) neighbors++
-    //     if ((j < this.cols - 1) && currentGrid[i][j + 1]) neighbors++
-    //     if (j > 0 && currentGrid[i][j - 1]) neighbors++
-    //     if (i < this.rows - 1 && currentGrid[i + 1][j]) neighbors++
-    //     if ((i < this.rows - 1 && j > 0) && currentGrid[i + 1][j - 1]) neighbors++
-    //     if ((i < this.rows - 1 && j < this.cols - 1) && currentGrid[i + 1][j + 1]) neighbors++
-
-    //     // 2. Set box to True/False according to the rules
-    //     // Box lives
-    //     if (!currentGrid[i][j] && neighbors === 3) nextGen[i][j] = true
-    //     // Box dies
-    //     if (currentGrid[i][j] && (neighbors !== 3)) nextGen[i][j] = false
-    //   }
-    // }
-		// this.setState({
-    //   gridFull: nextGen,
-    //   generation: this.state.generation++
-    // });
-    
-    let currentGrid = this.state.gridFull;
-		let nextGen = [...this.state.gridFull];
+    let nextGen = this.gridCopy(this.state.gridFull)
 
 		for (let i = 0; i < this.rows; i++) {
       for (let j = 0; j < this.cols; j++) {
         let count = 0;
-        if (i > 0) if (currentGrid[i - 1][j]) count++;
-        if (i > 0 && j > 0) if (currentGrid[i - 1][j - 1]) count++;
-        if (i > 0 && j < this.cols - 1) if (currentGrid[i - 1][j + 1]) count++;
-        if (j < this.cols - 1) if (currentGrid[i][j + 1]) count++;
-        if (j > 0) if (currentGrid[i][j - 1]) count++;
-        if (i < this.rows - 1) if (currentGrid[i + 1][j]) count++;
-        if (i < this.rows - 1 && j > 0) if (currentGrid[i + 1][j - 1]) count++;
-        if (i < this.rows - 1 && j < this.cols - 1) if (currentGrid[i + 1][j + 1]) count++;
+        // Top Neighbor
+        if (i > 0 && currentGrid[i - 1][j]) count++
+        // Top Left Neighbor
+        if ((i > 0 && j > 0) && (currentGrid[i - 1][j - 1])) count++
+        // Top Right Neighbor
+        if ((i > 0 && j < this.cols - 1) && (currentGrid[i - 1][j + 1])) count++
+        // Right Neighbor
+        if (j < this.cols - 1 && currentGrid[i][j + 1]) count++
+        // Left Neighbor
+        if (j > 0 && currentGrid[i][j - 1]) count++
+        // Bottom Neighbor
+        if (i < this.rows - 1 && currentGrid[i + 1][j]) count++
+        // Bottom Left Neighbor
+        if ((i < this.rows - 1 && j > 0) && (currentGrid[i + 1][j - 1])) count++
+        // Bottom Right Neighbor
+        if ((i < this.rows - 1 && j < this.cols - 1) && currentGrid[i + 1][j + 1]) count++
+
+        // Box Dies
         if (currentGrid[i][j] && (count < 2 || count > 3)) nextGen[i][j] = false;
+        // Box Lives
         if (!currentGrid[i][j] && count === 3) nextGen[i][j] = true;
       }
     }
