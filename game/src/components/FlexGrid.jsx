@@ -33,9 +33,6 @@ class FlexGrid extends Component {
     }
 
     return (
-      // <div className="grid" style={{width: width}}>
-      //   {rowsArr}
-      // </div>
       <Grid style={{width: width}}>
         {rowsArr}
       </Grid>

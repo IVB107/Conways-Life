@@ -26,6 +26,14 @@ class Buttons extends Component {
         <button onClick={this.props.seed}>
           Seed
         </button>
+        <select 
+          name="Grid Size" 
+          onChange={(e) => this.props.gridSize(e)}
+        >
+          <option value="60">60 x 60</option>
+          <option value="40">40 x 40</option>
+          <option value="20">20 x 20</option>
+        </select>
       </div>
     )
   }

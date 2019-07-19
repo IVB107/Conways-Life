@@ -24,11 +24,14 @@ class Main extends Component {
   gridCopy = (arr) => JSON.parse(JSON.stringify(arr))
 
   selectBox = (row, col) => {
-    let gridCopy = [...this.state.gridFull]
-    gridCopy[row][col] = !gridCopy[row][col]
-    this.setState({
-      gridFull: gridCopy
-    })
+    // Prevents selecting boxes while game is in progress
+    if (this.state.generation === 0) {
+      let gridCopy = [...this.state.gridFull]
+      gridCopy[row][col] = !gridCopy[row][col]
+      this.setState({
+        gridFull: gridCopy
+      })
+    }
   }
 
   seed = () => {
@@ -46,12 +49,6 @@ class Main extends Component {
   playButton = () => {
     clearInterval(this.intervalId)
     this.intervalId = setInterval(this.playGame, this.speed)
-    // while (true) {
-    //   let time = Date.now()
-    //   if (Math.floor(time) % this.speed === 0) {
-    //     this.playGame()
-    //   }
-    // }
   }
 
   pauseButton = () => {
@@ -68,13 +65,37 @@ class Main extends Component {
     this.playButton()
   }
 
-  clear = () => {
+  clear = (resized) => {
+    console.log(typeof(this.cols))
     clearInterval(this.intervalId)
     let grid = Array(this.rows).fill().map(() => Array(this.cols).fill(false))
+    console.log("Resetting grid & state...")
     this.setState({
       gridFull: grid, 
       generation: 0
     })
+    // Re-seed grid if cleared by grid resize
+    if (resized === "resized") this.seed()
+  }
+
+  handleGridSize = (size) => {
+    console.log("Inside grid size function!")
+    console.log("Size: ", size.target.value)
+    switch (size) {
+      case "20":
+        this.cols = Number(size.target.value)
+        this.rows = Number(size.target.value)
+      break;
+      case "40":
+        this.cols = Number(size.target.value)
+        this.rows = Number(size.target.value)
+      break;
+      default:
+        this.cols = Number(size.target.value)
+        this.rows = Number(size.target.value)
+    }
+    // Reset & update grid
+    this.clear("resized")
   }
 
   playGame = () => {
@@ -117,7 +138,7 @@ class Main extends Component {
 
   componentDidMount = () => {
     this.seed()
-    this.playButton()
+    // this.playButton()
   }
 
   render () {
@@ -137,7 +158,7 @@ class Main extends Component {
           fast={this.fast}
           clear={this.clear}
           seed={this.seed}
-          gridSize={this.gridSize}
+          gridSize={(e) => this.handleGridSize(e)}
         />
         <h2>Iterations: {this.state.generation}</h2>
       </MainContainer>
