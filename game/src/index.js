@@ -3,8 +3,7 @@ import ReactDOM from 'react-dom'
 import Styled from 'styled-components'
 
 import './index.css';
-// import Grid from './components/Grid'
-import FlexGrid from './components/FlexGrid'
+import Grid from './components/Grid'
 import Buttons from './components/Buttons'
 
 class Main extends Component {
@@ -24,7 +23,7 @@ class Main extends Component {
   gridCopy = (arr) => JSON.parse(JSON.stringify(arr))
 
   selectBox = (row, col) => {
-    // Prevents selecting boxes while game is in progress
+    // Prevent box selection while game is in progress
     if (this.state.generation === 0) {
       let gridCopy = [...this.state.gridFull]
       gridCopy[row][col] = !gridCopy[row][col]
@@ -66,10 +65,8 @@ class Main extends Component {
   }
 
   clear = (resized) => {
-    console.log(typeof(this.cols))
     clearInterval(this.intervalId)
     let grid = Array(this.rows).fill().map(() => Array(this.cols).fill(false))
-    console.log("Resetting grid & state...")
     this.setState({
       gridFull: grid, 
       generation: 0
@@ -125,7 +122,7 @@ class Main extends Component {
 
         // Box Dies
         if (currentGrid[i][j] && (count < 2 || count > 3)) nextGen[i][j] = false;
-        // Box Lives
+        // It's alive!!
         if (!currentGrid[i][j] && count === 3) nextGen[i][j] = true;
       }
     }
@@ -138,14 +135,13 @@ class Main extends Component {
 
   componentDidMount = () => {
     this.seed()
-    // this.playButton()
   }
 
   render () {
     return (
       <MainContainer>
         <h1>The Game of Life</h1>
-        <FlexGrid 
+        <Grid 
           gridFull={this.state.gridFull}
           rows={this.rows}
           cols={this.cols}

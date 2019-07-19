@@ -4,11 +4,10 @@ import Styled from 'styled-components'
 import '../index.css'
 import Box from './Box'
 
-class FlexGrid extends Component {
+class Grid extends Component {
 
   render () {
 
-    // const width = `${(this.props.cols * 17)-20}px`
     const width = `${(this.props.cols * 15)}px`
     let rowsArr = []
 
@@ -33,14 +32,14 @@ class FlexGrid extends Component {
     }
 
     return (
-      <Grid style={{width: width}}>
+      <GridContainer style={{width: width}}>
         {rowsArr}
-      </Grid>
+      </GridContainer>
     )
   }
 }
 
-const Grid = Styled.div`
+const GridContainer = Styled.div`
   display: flex;
   align-items: flex-start;
   justify-content: flex-start;
@@ -48,4 +47,4 @@ const Grid = Styled.div`
   margin: 20px 0;
 `
 
-export default FlexGrid
+export default Grid
