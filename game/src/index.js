@@ -1,16 +1,16 @@
-import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
+import React, { Component } from 'react'
+import ReactDOM from 'react-dom'
+import Styled from 'styled-components'
 
 import './index.css';
-// import Grid from './components/Grid'
-import FlexGrid from './components/FlexGrid'
+import Grid from './components/Grid'
 import Buttons from './components/Buttons'
 
 class Main extends Component {
 
   constructor() {
     super()
-    this.speed = 100
+    this.speed = 50
     this.rows = 60
     this.cols = 60
 
@@ -20,12 +20,17 @@ class Main extends Component {
     }
   }
 
+  gridCopy = (arr) => JSON.parse(JSON.stringify(arr))
+
   selectBox = (row, col) => {
-    let gridCopy = [...this.state.gridFull]
-    gridCopy[row][col] = !gridCopy[row][col]
-    this.setState({
-      gridFull: gridCopy
-    })
+    // Prevent box selection while game is in progress
+    if (this.state.generation === 0) {
+      let gridCopy = [...this.state.gridFull]
+      gridCopy[row][col] = !gridCopy[row][col]
+      this.setState({
+        gridFull: gridCopy
+      })
+    }
   }
 
   seed = () => {
@@ -59,59 +64,65 @@ class Main extends Component {
     this.playButton()
   }
 
-  clear = () => {
+  clear = (resized) => {
     clearInterval(this.intervalId)
     let grid = Array(this.rows).fill().map(() => Array(this.cols).fill(false))
     this.setState({
       gridFull: grid, 
       generation: 0
     })
+    // Re-seed grid if cleared by grid resize
+    if (resized === "resized") this.seed()
+  }
+
+  handleGridSize = (size) => {
+    console.log("Inside grid size function!")
+    console.log("Size: ", size.target.value)
+    switch (size) {
+      case "20":
+        this.cols = Number(size.target.value)
+        this.rows = Number(size.target.value)
+      break;
+      case "40":
+        this.cols = Number(size.target.value)
+        this.rows = Number(size.target.value)
+      break;
+      default:
+        this.cols = Number(size.target.value)
+        this.rows = Number(size.target.value)
+    }
+    // Reset & update grid
+    this.clear("resized")
   }
 
   playGame = () => {
-    // let currentGrid = this.state.gridFull
+    let currentGrid = [...this.state.gridFull]
     // let nextGen = [...this.state.gridFull]
-
-    // // 1. Count the number of 'live' neighbors (max 8) for each box
-    // for (let i = 0; i < this.rows; i++) {
-    //   for (let j = 0; j < this.cols; j++) {
-    //     let neighbors = 0
-    //     if (i > 0 && currentGrid[i - 1][j]) neighbors++;
-    //     if ((i > 0 && j > 0) && currentGrid[i - 1][j - 1]) neighbors++
-    //     if ((i > 0 && j < this.cols - 1) && currentGrid[i - 1][j + 1]) neighbors++
-    //     if ((j < this.cols - 1) && currentGrid[i][j + 1]) neighbors++
-    //     if (j > 0 && currentGrid[i][j - 1]) neighbors++
-    //     if (i < this.rows - 1 && currentGrid[i + 1][j]) neighbors++
-    //     if ((i < this.rows - 1 && j > 0) && currentGrid[i + 1][j - 1]) neighbors++
-    //     if ((i < this.rows - 1 && j < this.cols - 1) && currentGrid[i + 1][j + 1]) neighbors++
-
-    //     // 2. Set box to True/False according to the rules
-    //     // Box lives
-    //     if (!currentGrid[i][j] && neighbors === 3) nextGen[i][j] = true
-    //     // Box dies
-    //     if (currentGrid[i][j] && (neighbors !== 3)) nextGen[i][j] = false
-    //   }
-    // }
-		// this.setState({
-    //   gridFull: nextGen,
-    //   generation: this.state.generation++
-    // });
-    
-    let currentGrid = this.state.gridFull;
-		let nextGen = [...this.state.gridFull];
+    let nextGen = this.gridCopy(this.state.gridFull)
 
 		for (let i = 0; i < this.rows; i++) {
       for (let j = 0; j < this.cols; j++) {
         let count = 0;
-        if (i > 0) if (currentGrid[i - 1][j]) count++;
-        if (i > 0 && j > 0) if (currentGrid[i - 1][j - 1]) count++;
-        if (i > 0 && j < this.cols - 1) if (currentGrid[i - 1][j + 1]) count++;
-        if (j < this.cols - 1) if (currentGrid[i][j + 1]) count++;
-        if (j > 0) if (currentGrid[i][j - 1]) count++;
-        if (i < this.rows - 1) if (currentGrid[i + 1][j]) count++;
-        if (i < this.rows - 1 && j > 0) if (currentGrid[i + 1][j - 1]) count++;
-        if (i < this.rows - 1 && j < this.cols - 1) if (currentGrid[i + 1][j + 1]) count++;
+        // Top Neighbor
+        if (i > 0 && currentGrid[i - 1][j]) count++
+        // Top Left Neighbor
+        if ((i > 0 && j > 0) && (currentGrid[i - 1][j - 1])) count++
+        // Top Right Neighbor
+        if ((i > 0 && j < this.cols - 1) && (currentGrid[i - 1][j + 1])) count++
+        // Right Neighbor
+        if (j < this.cols - 1 && currentGrid[i][j + 1]) count++
+        // Left Neighbor
+        if (j > 0 && currentGrid[i][j - 1]) count++
+        // Bottom Neighbor
+        if (i < this.rows - 1 && currentGrid[i + 1][j]) count++
+        // Bottom Left Neighbor
+        if ((i < this.rows - 1 && j > 0) && (currentGrid[i + 1][j - 1])) count++
+        // Bottom Right Neighbor
+        if ((i < this.rows - 1 && j < this.cols - 1) && currentGrid[i + 1][j + 1]) count++
+
+        // Box Dies
         if (currentGrid[i][j] && (count < 2 || count > 3)) nextGen[i][j] = false;
+        // It's alive!!
         if (!currentGrid[i][j] && count === 3) nextGen[i][j] = true;
       }
     }
@@ -124,20 +135,13 @@ class Main extends Component {
 
   componentDidMount = () => {
     this.seed()
-    this.playButton()
   }
 
   render () {
     return (
-      <>
+      <MainContainer>
         <h1>The Game of Life</h1>
-        {/* <Grid
-          gridFull={this.state.gridFull}
-          rows={this.rows}
-          cols={this.cols}
-          selectBox={this.selectBox}
-        /> */}
-        <FlexGrid 
+        <Grid 
           gridFull={this.state.gridFull}
           rows={this.rows}
           cols={this.cols}
@@ -150,12 +154,19 @@ class Main extends Component {
           fast={this.fast}
           clear={this.clear}
           seed={this.seed}
-          gridSize={this.gridSize}
+          gridSize={(e) => this.handleGridSize(e)}
         />
         <h2>Iterations: {this.state.generation}</h2>
-      </>
+      </MainContainer>
     )
   }
 }
+
+const MainContainer = Styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+`
 
 ReactDOM.render(<Main />, document.getElementById('root'));
