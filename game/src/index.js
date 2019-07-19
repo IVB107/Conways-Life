@@ -1,5 +1,6 @@
-import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
+import React, { Component } from 'react'
+import ReactDOM from 'react-dom'
+import Styled from 'styled-components'
 
 import './index.css';
 // import Grid from './components/Grid'
@@ -10,7 +11,7 @@ class Main extends Component {
 
   constructor() {
     super()
-    this.speed = 100
+    this.speed = 50
     this.rows = 60
     this.cols = 60
 
@@ -121,7 +122,7 @@ class Main extends Component {
 
   render () {
     return (
-      <>
+      <MainContainer>
         <h1>The Game of Life</h1>
         {/* <Grid
           gridFull={this.state.gridFull}
@@ -145,9 +146,16 @@ class Main extends Component {
           gridSize={this.gridSize}
         />
         <h2>Iterations: {this.state.generation}</h2>
-      </>
+      </MainContainer>
     )
   }
 }
+
+const MainContainer = Styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+`
 
 ReactDOM.render(<Main />, document.getElementById('root'));
