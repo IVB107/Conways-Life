@@ -124,12 +124,6 @@ class Main extends Component {
     return (
       <MainContainer>
         <h1>The Game of Life</h1>
-        {/* <Grid
-          gridFull={this.state.gridFull}
-          rows={this.rows}
-          cols={this.cols}
-          selectBox={this.selectBox}
-        /> */}
         <FlexGrid 
           gridFull={this.state.gridFull}
           rows={this.rows}
